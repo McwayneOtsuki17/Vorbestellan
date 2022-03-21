@@ -1,0 +1,332 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<head>
+		<meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	  
+		<title>Vorbestellen | Register</title>
+		<meta content="" name="description">
+		<meta content="" name="keywords">
+	  
+		<!-- Favicons -->
+		<!-- <link href="assets/img/favicon.png" rel="icon"> -->
+		<link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+	  
+		<!-- Google Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+	  
+		<!-- Vendor CSS Files -->
+		<link href="{% static 'vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+	  
+		<!-- Template Main CSS File -->
+		<link href="{% static 'css/style.css' %}" rel="stylesheet">
+	  
+		<!-- Scripts -->
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	  </head>
+ <body>
+
+	  <!-- ======= Header ======= -->
+	  <header id="header" class="fixed-top d-flex align-items-center">
+		<div class="container d-flex align-items-center">
+	
+		  <h1 class="logo me-auto"><a href="{% url 'vorbestellenapp:index_view' %}">vor<span class="highlight">best</span>ellen<span class="highlight">.</span></a></h1>
+		  <!-- <h1 class="logo me-auto"><a href="index.html">vorbestellen.</a></h1> -->
+		  <!-- Uncomment below if you prefer to use an image logo -->
+		  <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+	
+		  <nav id="navbar" class="navbar">
+			<ul>
+			  <li><a href="{% url 'vorbestellenapp:index_view' %}" class="active">Home</a></li>
+	
+			  <li class="dropdown"><a href="#"><span>Info</span> <i class="bi bi-chevron-down"></i></a>
+				<ul>
+				  <li><a href="{% url 'vorbestellenapp:about_view' %}">About Us</a></li>
+				  <li><a href="{% url 'vorbestellenapp:contact_view' %}">Contact Us</a></li>
+				</ul>
+			  </li>
+	
+			  <!-- Services Nav -->
+			  <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down"></i></a>
+				<ul>
+					<li><a href="{% url 'vorbestellenapp:vacantrooms_view' %}">Dashboard</a></li>
+				  <li class="dropdown"><a href="{% url 'vorbestellenapp:pricing_view' %}" class="#"><span>Prices & Rooms</span></a>
+				  </li>
+				</ul>
+			  </li>
+			
+			  <!-- If admin kay lahi ang dropdown sa service -->
+			  {% ifequal current_user 'admin' %}
+			  <li class="dropdown"><a href="#"><span>Manage</span> <i class="bi bi-chevron-down"></i></a>
+				<ul>
+					<li><a href="{% url 'vorbestellenapp:rooms_view' %}">Manage Rooms</a></li>
+					<li><a href="{% url 'vorbestellenapp:managebookings_view' %}">Manage Bookings</a></li>
+					<li><a href="{% url 'vorbestellenapp:manageusers_view' %}">Manage User</a></li>     
+				  </li>
+				</ul>
+			  </li>
+			  {% endifequal %}
+			  <!-- end -->
+	
+			{% if current_user %}
+			<li class="dropdown"><a href="#"><span>{{current_user}}</span> <i class="bi bi-chevron-down"></i></a>
+			<ul>
+			  {% ifnotequal current_user 'admin' %}
+			  <li><a href="#">My Reservations</a></li>
+			  <li><a href="{% url 'vorbestellenapp:account_view' %}">Account Settings</a></li>
+			  {% endifnotequal %}
+			  <li><a href="{% url 'vorbestellenapp:logout' %}">Logout</a></li>
+			</ul>
+			
+			{% else %}
+			<li><a href="#" class="getstarted" data-toggle="modal" data-target="#exampleModalCenter">Login</a></li>
+			</ul>
+			{% endif %}
+			<i class="bi bi-list mobile-nav-toggle"></i>
+		  </nav><!-- .navbar -->
+
+		      <!-- Error Message (account existing) -->
+    {% for message in messages %}
+    <div id="errorDiv"style="margin: auto; width: 300px; border-radius: 5px; position: absolute;
+              background-color: white; z-index: 1; transform: translate(158%, 128%);">
+    <p class="{{ message.tags }}" 
+      style="color: rgb(201, 44, 44); font-weight: bold; text-align: center;
+             font-family: Raleway; margin-top: 10px; padding: 5px;">
+      {% if 'login' in message.tags %}
+        {{ message }}
+      {% else %}
+        {{ message }}
+      {% endif %}
+      </p></div>
+    {% endfor %}
+    <script type="text/javascript">
+        var opacity=0;
+        var intervalID=0;
+        window.onload=fadeout;
+        function fadeout(){
+              setInterval(hide, 800);
+        }
+        function hide(){
+          var body=document.getElementById("errorDiv");
+          opacity =
+          Number(window.getComputedStyle(body).getPropertyValue("opacity"))
+          if(opacity>0){
+                opacity=opacity-0.1;
+                        body.style.opacity=opacity
+          }
+          else{
+              clearInterval(intervalID); 
+          }
+        } 
+    </script>
+    <!-- End of Error Message -->
+
+		  </header>
+		  <br><br><br>
+		  <!-- Form -->
+		  <div class="container">
+			  <div class="row">
+				  <div class="col-sm-6">
+					  <br><br>
+					  &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+					<img src="{% static 'img/portfolio/square-temp.jpg' %}" style="width: 500px; height: 601px;" alt="">
+				  </div>
+				  <div class="col-sm-5">
+				  	{% for users in users %}
+					<form id="form1" action="" method="POST" autocomplete="off" enctype="multipart/form-data">
+						{% csrf_token %}
+						<br><br>
+						<h1><span class="highlight">Account</span> Details</h1>
+						<h3><span class="highlight">Status:</span> {{users.status}}</h3><br>
+						<!-- <div class="col-8" style="padding: 10px; display: inline-block; width: 634px;"></div> -->
+						<div class="form-row">
+
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 500px;">
+								<label>Username</label>
+								<input type="text" class="form-control rounded-left" id="username" name="username" value="{{users.username}}"placeholder="Username" readonly>
+							</div>
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 500px;">
+								<label>Email</label>
+								<input type="email" class="form-control rounded-left" id="email" name="email" value="{{users.email}}" placeholder="Email" readonly>
+							</div>
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 248px;">
+								<label>First Name</label>
+								<input type="text" class="form-control rounded-left" id="first_name" name="first_name" placeholder="First Name" value="{{users.first_name}}">
+							</div>
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 248px;">
+								<label>Last Name</label>
+								<input type="text" class="form-control rounded-left" id="last_name" name="last_name" placeholder="Last Name" value="{{users.last_name}}">
+							</div>
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 500px;">
+								<label>Contact No.</label>
+								<input type="text" class="form-control rounded-left" id="contact" name="contact" placeholder="Contact No." value="{{users.contact}}">
+							</div>
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 248px;">
+								<label>Barangay</label>
+								<input type="text" class="form-control rounded-left" id="barangay" name="barangay" placeholder="Barangay" value="{{users.barangay}}">
+							</div>
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 248px;">
+								<label>City</label>
+								<input type="text" class="form-control rounded-left" id="city" name="city" placeholder="City" value="{{users.city}}" >
+							</div>	
+	
+							<div class="col-8" style="padding: 10px; display: inline-block; width: 500px;">
+								<br>
+								{% endfor %}
+								<input type="submit" class="form-control btn btn-danger rounded submit px-3" value="Save">
+							  </div>
+							  <br>
+						</div>
+
+					</form>
+					<br><br><br><br><br><br><br><br>
+				  </div>
+			  </div>
+
+		  </div>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-info">
+              <h3>Vorbestellen</h3>
+              <p>
+                A108 Adam Street <br>
+                NY 535022, USA<br><br>
+                <strong>Phone:</strong> +1 5589 55488 55<br>
+                <strong>Email:</strong> info@example.com<br>
+              </p>
+              <div class="social-links mt-3">
+                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Info</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Our Services</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Conference Rooms</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Reservations</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Project Management</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-4 col-md-6 footer-newsletter">
+            <h4>Our Newsletter</h4>
+            <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+            <form action="" method="post">
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>Vorbestellen</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/sailor-free-bootstrap-theme/ -->
+        <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> -->
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <!-- Login Modal -->
+  <!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	  <div class="modal-content">
+	  <div class="modal-body p-4 p-md-5">
+	  <div class="icon d-flex align-items-center justify-content-center">
+	  <span class="ion-ios-person"></span>
+	  </div>
+	  <h3 class="text-center mb-4">Sign In</h3>
+	  <form id="form1" action="" method="POST" autocomplete="off" enctype="multipart/form-data" class="login-form">
+		{% csrf_token %}
+		  <div class="form-group">
+		  <input type="text" class="form-control rounded-left" id="username" name="username" placeholder="Username">
+		  </div>
+		<br>
+		  <div class="form-group d-flex">
+		  <input type="password" class="form-control rounded-left" id="password" name="password" placeholder="Password">
+		  </div>
+		<div class="form-group">
+		  <br><br>
+		  <button type="submit" class="form-control btn btn-danger rounded submit px-3">Login</button>
+		</div>
+		<br>
+  
+		  <div class="form-group d-md-flex">
+			  <div class="form-check w-50">
+				<label class="custom-control fill-checkbox">
+				  <input type="checkbox" class="fill-control-input">
+				  <span class="fill-control-indicator"></span>
+				  <span class="fill-control-description">Remember Me</span>
+				</label>
+			  </div>
+				<div class="w-50 text-md-right">
+				<a href="#">Forgot Password</a>
+		  </div>
+		</div>
+	  </form>
+	</div>
+  
+	<div class="modal-footer justify-content-center">
+		<p>Not a member? <a href="{% url 'vorbestellenapp:signup_view' %}">Create an account</a></p>
+  </div>
+  </div>
+  </div>
+  
+  </div>
+  
+  <script>
+	$('#myModal').on('shown.bs.modal', function () {
+	$('#myInput').trigger('focus')
+  })
+  </script>
+  
+  <!-- END MODAL -->
+  
+
+ </body>
