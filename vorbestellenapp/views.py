@@ -10,6 +10,8 @@ from django.db.models import Q
 from django.core import serializers
 from django.http import JsonResponse
 from django.db.models import Count
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect 
 
 def logout(request):
     try:
@@ -39,7 +41,19 @@ def removefilterdate(request):
         return redirect('vorbestellenapp:vacantrooms_view')
     return redirect('vorbestellenapp:vacantrooms_view')
 
-class IndexView(View): 
+def listToString(s): 
+    
+    # initialize an empty string
+    str1 = "" 
+    
+    # traverse in the string  
+    for ele in s: 
+        str1 += ele  
+    
+    # return string  
+    return str1 
+
+class IndexView(View):
     def get(self, request): 
         if 'user' in request.session:
             current_user = request.session['user']
@@ -49,16 +63,18 @@ class IndexView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'Index.html', context)
+            return render(request, 'index.php', context)
         else: 
-            return render(request, 'Index.html', {})
-            
+            return render(request, 'index.php', {})
+    @method_decorator(csrf_protect)             
     def post(self, request):
         if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            check_password = pbkdf2_sha256.hash(password, rounds=20000, salt_size=16)
-            dec_password = pbkdf2_sha256.verify(password, check_password)
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            checking_pw = Users.objects.filter(username=username).values_list("password",flat=True)
+            listpw = list(checking_pw)
+
+            dec_password = pbkdf2_sha256.verify(password, listToString(listpw))
             check_user = Users.objects.filter(username=username)
             if check_user and dec_password:
                 request.session['user'] = username
@@ -80,16 +96,18 @@ class AboutView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'About.html', context)
+            return render(request, 'about.php', context)
         else:
-            return render(request, 'About.html', {})
-        
+            return render(request, 'about.php', {})
+    @method_decorator(csrf_protect)     
     def post(self, request):
         if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            check_password = pbkdf2_sha256.hash(password, rounds=20000, salt_size=16)
-            dec_password = pbkdf2_sha256.verify(password, check_password)
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            checking_pw = Users.objects.filter(username=username).values_list("password",flat=True)
+            listpw = list(checking_pw)
+
+            dec_password = pbkdf2_sha256.verify(password, listToString(listpw))
             check_user = Users.objects.filter(username=username)
             if check_user and dec_password:
                 request.session['user'] = username
@@ -110,16 +128,18 @@ class ContactView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'Contact.html', context)
+            return render(request, 'contact.php', context)
         else:
-            return render(request, 'Contact.html', {})
-
+            return render(request, 'contact.php', {})
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            check_password = pbkdf2_sha256.hash(password, rounds=20000, salt_size=16)
-            dec_password = pbkdf2_sha256.verify(password, check_password)
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            checking_pw = Users.objects.filter(username=username).values_list("password",flat=True)
+            listpw = list(checking_pw)
+
+            dec_password = pbkdf2_sha256.verify(password, listToString(listpw))
             check_user = Users.objects.filter(username=username)
             if check_user and dec_password:
                 request.session['user'] = username
@@ -139,7 +159,7 @@ class AdminView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'Admin.html', context)
+            return render(request, 'Admin.php', context)
         else:
             return HttpResponse('Please login first to view this page.') 
 
@@ -152,18 +172,20 @@ class PriceView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'pricing.html', context)
+            return render(request, 'pricing.php', context)
         else:
-            return render(request, 'pricing.html', {})
+            return render(request, 'pricing.php', {})
             
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             if 'btnLogin' in request.POST:
-                username = request.POST.get('username')
-                password = request.POST.get('password')
-                check_password = pbkdf2_sha256.hash(password, rounds=20000, salt_size=16)
-                dec_password = pbkdf2_sha256.verify(password, check_password)
+                username = request.POST.get("username")
+                password = request.POST.get("password")
+                checking_pw = Users.objects.filter(username=username).values_list("password",flat=True)
+                listpw = list(checking_pw)
+
+                dec_password = pbkdf2_sha256.verify(password, listToString(listpw))
                 check_user = Users.objects.filter(username=username)
                 if check_user and dec_password:
                     request.session['user'] = username
@@ -200,9 +222,10 @@ class SignUpView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'signup.html', context)
+            return render(request, 'signup.php', context)
         else:
-            return render(request, 'signup.html', {})
+            return render(request, 'signup.php', {})
+    @method_decorator(csrf_protect) 
     def post(self, request):        
         form = UsersForm(request.POST, request.FILES)        
         if form.is_valid():
@@ -244,10 +267,10 @@ class AccountView(View):
                 'rooms' : rooms,
                 'reser' : reser,
             }
-            return render(request, 'account.html', context)
+            return render(request, 'account.php', context)
         else:
             return HttpResponse('Please login first to view this page.')
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             form = UsersForm(request.POST, request.FILES)
@@ -284,12 +307,12 @@ class RoomsView(View):
                 'rooms' : rooms,
             }
             if current_user == "admin":
-                return render(request, 'rooms.html', context)
+                return render(request, 'rooms.php', context)
             else:
                 return HttpResponse('You are not an admin!')
         else:
             return HttpResponse('Please login first to view this page.') 
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             form = RoomsForm(request.POST, request.FILES) 
@@ -406,15 +429,15 @@ class BookingView(View):
                 'current_price': current_price,
                 'rooms': rooms,
             }
-            # return render(request, 'booking.html', context)
-            return render(request, 'reservation.html', context)
-            # return render(request, 'mybookings.html', context)
+            # return render(request, 'booking.php', context)
+            return render(request, 'reservation.php', context)
+            # return render(request, 'mybookings.php', context)
         else:
-            # return render(request, 'booking.html', {})
-            return render(request, 'reservation.html', {})
-            # return render(request, 'mybookings.html', {})
+            # return render(request, 'booking.php', {})
+            return render(request, 'reservation.php', {})
+            # return render(request, 'mybookings.php', {})
           
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             if 'btnLogin' in request.POST:
@@ -466,10 +489,10 @@ class MngBkngsView(View):
                 'reser' : reser,
                 'vreser' : vreser,
             }
-            return render(request, 'managebookings.html', context)
+            return render(request, 'managebookings.php', context)
         else:
             return HttpResponse('Please login first to view this page.') 
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             form = RoomsForm(request.POST, request.FILES) 
@@ -507,10 +530,10 @@ class MngUsersView(View):
                 'admin' : admin,
                 'users' : users,
             }
-            return render(request, 'manageusers.html', context)
+            return render(request, 'manageusers.php', context)
         else:
             return HttpResponse('Please login first to view this page.') 
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             form = UsersForm(request.POST, request.FILES) 
@@ -579,7 +602,7 @@ class VacantRoomsView(View):
                 'book_count': book_count,
                 'book_list': book_list,
                 }
-                return render(request, 'vacantrooms.html', context)
+                return render(request, 'vacantrooms.php', context)
             elif 'filtertriggerbook' in request.session:
                 reserved_bookings = request.session['reserved_bookings']
                 filtertriggerbook = request.session['filtertriggerbook']
@@ -596,7 +619,7 @@ class VacantRoomsView(View):
                 'book_list': book_list,
                 'listbookings': listbookings,
                 }
-                return render(request, 'vacantrooms.html', context)
+                return render(request, 'vacantrooms.php', context)
             context = {
                 'current_user': current_user,
                 'rooms' : rooms,
@@ -605,10 +628,10 @@ class VacantRoomsView(View):
                 'book_count': book_count,
                 'book_list': book_list,
             }
-            return render(request, 'vacantrooms.html', context)
+            return render(request, 'vacantrooms.php', context)
         else:
             return HttpResponse('Please login first to view this page.') 
-
+    @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
             form = ReservationsForm(request.POST, request.FILES)
@@ -634,3 +657,46 @@ class VacantRoomsView(View):
                 request.session['filterbookdate'] = room_date
                 return redirect('vorbestellenapp:vacantrooms_view')
             return redirect('vorbestellenapp:vacantrooms_view')   
+
+class MyRsrvView(View):
+    def get(self, request):
+        if 'user' in request.session:
+            current_user = request.session['user']
+            users = Users.objects.filter(username="admin")
+            reser = Reservations.objects.filter(reserver_id_id=current_user, status="Pending")
+            vreser = Reservations.objects.filter(reserver_id_id=current_user, status="Verified")
+            context = {
+                'current_user': current_user,
+                'users' : users,
+                'reser' : reser,
+                'vreser' : vreser,
+            }
+            return render(request, 'myreservations.php', context)
+        else:
+            return HttpResponse('Please login first to view this page.') 
+
+    def post(self, request):
+        if request.method == 'POST':
+            form = RoomsForm(request.POST, request.FILES) 
+            if 'btnAcceptReservation' in request.POST:
+                form = ReservationsForm(request.POST, request.FILES) 
+                acceptroom = request.POST.get("acceptroom")
+                a = Reservations.objects.get(reservation_id=acceptroom)
+                a.status = "Cancelled"
+                a.save()
+                return redirect('vorbestellenapp:myreservations_view')
+
+            elif 'btnChangeReservation' in request.POST:
+                form = ReservationsForm(request.POST, request.FILES) 
+                pendingroom = request.POST.get("pendingroom")
+                p = Reservations.objects.get(reservation_id=pendingroom)
+                p.status = "Pending"
+                p.save()
+                return redirect('vorbestellenapp:myreservations_view')
+
+            #delete from Verification table
+            elif 'btndeleteReservation' in request.POST:
+                form = ReservationsForm(request.POST, request.FILES) 
+                vreser_code = request.POST.get('tobedelroom')
+                Reservations.objects.get(reservation_id=vreser_code).delete()
+                return redirect('vorbestellenapp:myreservations_view')

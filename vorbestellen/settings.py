@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-5-(_#&rv1%ylc421n96^wco1(w61yz93l##yb#sr-1a(9w_u!9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '130.105.135.127', '52.182.136.38',
+                '17-vorbestellen.azurewebsites.net',
+                'https://17-vorbestellen.azurewebsites.net',]
 
 
 # Application definition
@@ -42,7 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,18 +76,31 @@ WSGI_APPLICATION = 'vorbestellen.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'vsdb',
-         'USER': 'root',
-         'PASSWORD': '',
-         'HOST': '127.0.0.1',
-         'PORT': '3306',
-         'OPTIONS': { 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'", },
-     }
- }
+# Use this for running the website and databases locally
+# DATABASES = {
+#      'default': {
+#          'ENGINE': 'django.db.backends.mysql',
+#          'NAME': 'vsdb',
+#          'USER': 'root',
+#          'PASSWORD': '',
+#          'HOST': '127.0.0.1',
+#          'PORT': '3306',
+#          'OPTIONS': { 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'", },
+#      }
+#  }
 
+# This is the database for deployment
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'vsdb',
+        'USER': 'vorbestellan_admin@vorbestellan-database',
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': 'vorbestellan-database.postgres.database.azure.com',
+        'PORT': '5432',
+        'OPTION' : {'sslmode': 'require'},
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -139,3 +154,7 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = ['https://17-vorbestellen.azurewebsites.net', 'https://*.127.0.0.1',
+                        '17-vorbestellan.azurewebsites.net', '127.0.0.1', 'https://17-vorbestellen.azurewebsites.net/']
