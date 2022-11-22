@@ -63,9 +63,9 @@ class IndexView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'index.php', context)
+            return render(request, 'index.html', context)
         else: 
-            return render(request, 'index.php', {})
+            return render(request, 'index.html', {})
     @method_decorator(csrf_protect)             
     def post(self, request):
         if request.method == 'POST':
@@ -96,9 +96,9 @@ class AboutView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'about.php', context)
+            return render(request, 'about.html', context)
         else:
-            return render(request, 'about.php', {})
+            return render(request, 'about.html', {})
     @method_decorator(csrf_protect)     
     def post(self, request):
         if request.method == 'POST':
@@ -128,9 +128,9 @@ class ContactView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'contact.php', context)
+            return render(request, 'contact.html', context)
         else:
-            return render(request, 'contact.php', {})
+            return render(request, 'contact.html', {})
     @method_decorator(csrf_protect) 
     def post(self, request):
         if request.method == 'POST':
@@ -159,7 +159,7 @@ class AdminView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'Admin.php', context)
+            return render(request, 'Admin.html', context)
         else:
             return HttpResponse('Please login first to view this page.') 
 
@@ -172,9 +172,9 @@ class PriceView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'pricing.php', context)
+            return render(request, 'pricing.html', context)
         else:
-            return render(request, 'pricing.php', {})
+            return render(request, 'pricing.html', {})
             
     @method_decorator(csrf_protect) 
     def post(self, request):
@@ -222,9 +222,9 @@ class SignUpView(View):
                 'current_user': current_user,
                 'users' : users,
             }
-            return render(request, 'signup.php', context)
+            return render(request, 'signup.html', context)
         else:
-            return render(request, 'signup.php', {})
+            return render(request, 'signup.html', {})
     @method_decorator(csrf_protect) 
     def post(self, request):        
         form = UsersForm(request.POST, request.FILES)        
@@ -267,7 +267,7 @@ class AccountView(View):
                 'rooms' : rooms,
                 'reser' : reser,
             }
-            return render(request, 'account.php', context)
+            return render(request, 'account.html', context)
         else:
             return HttpResponse('Please login first to view this page.')
     @method_decorator(csrf_protect) 
@@ -307,7 +307,7 @@ class RoomsView(View):
                 'rooms' : rooms,
             }
             if current_user == "admin":
-                return render(request, 'rooms.php', context)
+                return render(request, 'rooms.html', context)
             else:
                 return HttpResponse('You are not an admin!')
         else:
@@ -429,13 +429,13 @@ class BookingView(View):
                 'current_price': current_price,
                 'rooms': rooms,
             }
-            # return render(request, 'booking.php', context)
-            return render(request, 'reservation.php', context)
-            # return render(request, 'mybookings.php', context)
+            # return render(request, 'booking.html', context)
+            return render(request, 'reservation.html', context)
+            # return render(request, 'mybookings.html', context)
         else:
-            # return render(request, 'booking.php', {})
-            return render(request, 'reservation.php', {})
-            # return render(request, 'mybookings.php', {})
+            # return render(request, 'booking.html', {})
+            return render(request, 'reservation.html', {})
+            # return render(request, 'mybookings.html', {})
           
     @method_decorator(csrf_protect) 
     def post(self, request):
@@ -489,7 +489,7 @@ class MngBkngsView(View):
                 'reser' : reser,
                 'vreser' : vreser,
             }
-            return render(request, 'managebookings.php', context)
+            return render(request, 'managebookings.html', context)
         else:
             return HttpResponse('Please login first to view this page.') 
     @method_decorator(csrf_protect) 
@@ -530,7 +530,7 @@ class MngUsersView(View):
                 'admin' : admin,
                 'users' : users,
             }
-            return render(request, 'manageusers.php', context)
+            return render(request, 'manageusers.html', context)
         else:
             return HttpResponse('Please login first to view this page.') 
     @method_decorator(csrf_protect) 
@@ -602,7 +602,7 @@ class VacantRoomsView(View):
                 'book_count': book_count,
                 'book_list': book_list,
                 }
-                return render(request, 'vacantrooms.php', context)
+                return render(request, 'vacantrooms.html', context)
             elif 'filtertriggerbook' in request.session:
                 reserved_bookings = request.session['reserved_bookings']
                 filtertriggerbook = request.session['filtertriggerbook']
@@ -619,7 +619,7 @@ class VacantRoomsView(View):
                 'book_list': book_list,
                 'listbookings': listbookings,
                 }
-                return render(request, 'vacantrooms.php', context)
+                return render(request, 'vacantrooms.html', context)
             context = {
                 'current_user': current_user,
                 'rooms' : rooms,
@@ -628,7 +628,7 @@ class VacantRoomsView(View):
                 'book_count': book_count,
                 'book_list': book_list,
             }
-            return render(request, 'vacantrooms.php', context)
+            return render(request, 'vacantrooms.html', context)
         else:
             return HttpResponse('Please login first to view this page.') 
     @method_decorator(csrf_protect) 
@@ -671,7 +671,7 @@ class MyRsrvView(View):
                 'reser' : reser,
                 'vreser' : vreser,
             }
-            return render(request, 'myreservations.php', context)
+            return render(request, 'myreservations.html', context)
         else:
             return HttpResponse('Please login first to view this page.') 
 
